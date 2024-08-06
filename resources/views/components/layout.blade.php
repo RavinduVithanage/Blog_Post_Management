@@ -7,7 +7,10 @@
     @vite('resources/css/app.css')
     <title>Blog Post</title>
 </head>
-<body>
+<body class="bg-slate-200 dark:bg-slate-700">
+    <x-navbar/>
+    <div class="max-w-6xl mx-auto">
     {{ $slot }}
+    </div>
 </body>
 </html>

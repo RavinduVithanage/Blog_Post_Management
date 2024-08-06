@@ -1,3 +1,3 @@
 <x-layout>
-    <h1>Post Index Page</h1>
+    <x-header>Post Index Page</x-header>
 </x-layout>
