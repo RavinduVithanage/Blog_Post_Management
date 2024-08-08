@@ -12,7 +12,8 @@ class PostController extends Controller
      */
     public function index()
     {
-        return view("posts.index");
+        $posts = Post::all();        
+        return view("posts.index",["posts"=> $posts]);
     }
 
     /**
@@ -28,15 +29,24 @@ class PostController extends Controller
      */
     public function store(Request $request)
     {
-        
+        $validatedData = $request->validate([
+            "title" => ['required', 'string', 'min:5', 'max:255'],
+            "message" => ['required', 'min:5'],
+        ]);
+    
+        Post::create($validatedData);
+     
+        // return redirect()->route("posts.index");
+         return to_route("posts.index");
     }
 
     /**
      * Display the specified resource.
      */
-    public function show()
+    public function show(Post $post)
     {
-        return view("posts.show");
+        // $post = Post::findOrFail($id);
+        return view("posts.show",["post"=>$post]);
     }
 
     /**
@@ -52,7 +62,18 @@ class PostController extends Controller
      */
     public function update(Request $request, Post $post)
     {
-        //
+        $validatedData = $request->validate([
+            "title" => ['required', 'string', 'min:5', 'max:255'],
+            "message" => ['required', 'min:5'],
+        ],
+        [
+            'title.required' => 'The title is required.',
+            'message.required' => 'The message is required.',
+            // Add more custom messages if needed
+        ]);
+    
+        $post->update($validatedData);
+        return to_route('posts.index');
     }
 
     /**
@@ -60,6 +81,7 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        //
+        $post->delete();
+        return to_route('posts.index');
     }
 }
