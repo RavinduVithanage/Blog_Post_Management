@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\PostController;
+use App\Http\Controllers\UserLoginController;
+use App\Http\Controllers\UserRegisterController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', function () {
@@ -16,3 +18,8 @@ Route::get('/', function () {
 // Route::delete('/posts/{id}',[PostController::class,'destroy']);
 
 Route::resource('/posts', PostController::class);
+Route::get('/register',[UserRegisterController::class,'register'])->name('register');
+Route::post('/user-register',[UserRegisterController::class,'userRegister'])->name('register.user');
+Route::get('/login',[UserLoginController::class,'loginUser'])->name('login');
+Route::post('/user-login',[UserLoginController::class,'loggedUser'])->name('login.user');
+Route::post('/logout',[UserLoginController::class,'logoutUser'])->name('logout.user');
