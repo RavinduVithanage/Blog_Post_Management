@@ -21,6 +21,11 @@ Route::middleware('auth')->group(function () {
     Route::put('/posts/{post}',[PostController::class,'update'])->name('posts.update');
     Route::delete('/posts/{post}',[PostController::class,'destroy'])->name('posts.destroy');
     Route::post('/logout',[UserLoginController::class,'logoutUser'])->name('logout.user');
+
+    Route::get('/admin', function () {
+        return 'Your Logged in admin';
+    })->middleware('can:is_admin')->name('admin');
+
 });
 
 Route::middleware('guest')->group(function () {

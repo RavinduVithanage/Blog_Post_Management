@@ -3,6 +3,10 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
+use App\Models\Post;
+use App\Models\User;
+use Illuminate\Support\Facades\Gate;
+ 
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -19,6 +23,10 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+
+        // Define the is_admin ability
+        Gate::define('is_admin', function (User $user) {
+            return $user->is_admin; // Adjust according to your role management
+        });
     }
 }

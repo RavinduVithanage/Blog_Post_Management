@@ -24,6 +24,7 @@
             @endguest
 
             @auth
+            <span class="text-blue-600 dark:text-blue-600 font-semibold">{{Auth::user()->name}}</span>
             <form action="{{route('logout.user')}}" method="POST">
               @csrf
             <x-navbar-link href="{{route('register')}}" :active="false" onclick="event.preventDefault(); this.closest('form').submit();">Logout</x-navbar-link>
