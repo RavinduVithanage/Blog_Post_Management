@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Post;
+use App\Models\User;
 use Illuminate\Http\Request;
 
 class PostController extends Controller
@@ -33,10 +34,16 @@ class PostController extends Controller
             "title" => ['required', 'string', 'min:5', 'max:255'],
             "message" => ['required', 'min:5'],
         ]);
-    
-        Post::create($validatedData);
-     
+
+        // $validatedData['user_id']= auth()->id();  
+        // Post::create($validatedData);
+
+        auth()->user()->posts()->create($validatedData);
         // return redirect()->route("posts.index");
+        
+
+
+     
          return to_route("posts.index");
     }
 
@@ -54,6 +61,9 @@ class PostController extends Controller
      */
     public function edit(Post $post)
     {
+        if($post->user_id !== auth()->id()){
+            abort('403');
+        }
         return view("posts.edit", compact("post"));
     }
 
@@ -73,7 +83,7 @@ class PostController extends Controller
         ]);
     
         $post->update($validatedData);
-        return to_route('posts.index');
+        return to_route('posts.show',['post'=>$post]);
     }
 
     /**
