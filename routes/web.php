@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Controllers\AdminController;
+use App\Http\Controllers\AdminPostController;
 use App\Http\Controllers\PostController;
 use App\Http\Controllers\UserLoginController;
 use App\Http\Controllers\UserRegisterController;
@@ -11,7 +13,7 @@ Route::get('/', function () {
 
 
 Route::get('/posts',[PostController::class,'index'])->name('posts.index');
-Route::get('/posts/{post}',[PostController::class,'show'])->middleware('can-view-post')->name('posts.show');
+Route::get('/posts/{post}',[PostController::class,'show'])->name('posts.show');
 // Route::resource('/posts', PostController::class);
 
 Route::middleware('auth')->group(function () { 
@@ -22,10 +24,12 @@ Route::middleware('auth')->group(function () {
     Route::delete('/posts/{post}',[PostController::class,'destroy'])->name('posts.destroy');
     Route::post('/logout',[UserLoginController::class,'logoutUser'])->name('logout.user');
 
-    Route::get('/admin', function () {
-        return 'Your Logged in admin';
-    })->middleware('can:is_admin')->name('admin');
-
+   Route::middleware('is-admin')->group(function () {
+    Route::get('/admin',[AdminController::class,'index'])->name('admin.index');
+    Route::get('/admin/post/{post}/edit',[AdminPostController::class,'edit'])->name('admin.posts.edit');
+    Route::put('/admin/post/{post}/update',[AdminPostController::class,'update'])->name('admin.posts.update');
+    Route::delete('/admin/post/{post}/destroy',[AdminPostController::class,'destroy'])->name('admin.posts.destroy');
+    });
 });
 
 Route::middleware('guest')->group(function () {
