@@ -6,6 +6,8 @@ use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
+use Illuminate\Support\Facades\File;   
+use Illuminate\Support\Facades\Storage; 
 
 class PostController extends Controller
 {
@@ -34,18 +36,21 @@ class PostController extends Controller
         $validatedData = $request->validate([
             "title" => ['required', 'string', 'min:5', 'max:255'],
             "message" => ['required', 'min:5'],
+            "thumbnail" => ["required","image"],
+        ],
+        [
+            'title.required' => 'The title is required.',
+            'message.required' => 'The message is required.',
+            'thumbnail.required'=> 'Thumbanail is Requirted',
+            // Add more custom messages if needed
         ]);
-
+        $validatedData['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
+    
         // $validatedData['user_id']= auth()->id();  
         // Post::create($validatedData);
-
         auth()->user()->posts()->create($validatedData);
-        // return redirect()->route("posts.index");
         
-
-
-     
-         return to_route("posts.index");
+        return to_route("posts.index");
     }
 
     /**
@@ -78,12 +83,19 @@ class PostController extends Controller
         $validatedData = $request->validate([
             "title" => ['required', 'string', 'min:5', 'max:255'],
             "message" => ['required', 'min:5'],
+            "thumbnail" => ["sometimes","image"],
         ],
         [
             'title.required' => 'The title is required.',
             'message.required' => 'The message is required.',
+            // 'thumbnail.required'=> 'Thumbanail is Requirted',
             // Add more custom messages if needed
         ]);
+    
+        if($request->hasFile('thumbnail')){
+            File::delete(storage_path('app/public/' . $post->thumbnail));
+            $validatedData['thumbnail'] = $request->file('thumbnail')->store('thumbnails');
+        }
     
         $post->update($validatedData);
         return to_route('posts.show',['post'=>$post]);
@@ -94,7 +106,8 @@ class PostController extends Controller
      */
     public function destroy(Post $post)
     {
-        Gate::authorize('update', $post);
+        Gate::authorize('delete', $post);
+        File::delete(storage_path('app/public/' . $post->thumbnail));
         $post->delete();
         return to_route('posts.index');
     }
