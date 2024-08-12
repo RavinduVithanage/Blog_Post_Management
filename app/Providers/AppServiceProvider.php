@@ -25,7 +25,7 @@ class AppServiceProvider extends ServiceProvider
     {
 
         // Define the is_admin ability
-        Gate::define('is_admin', function (User $user) {
+        Gate::define('is-admin', function (User $user) {
             return $user->is_admin; // Adjust according to your role management
         });
     }

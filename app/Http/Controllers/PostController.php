@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\PostMail;
 use App\Models\Post;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Facades\File;   
 use Illuminate\Support\Facades\Storage; 
+use Illuminate\Support\Facades\Mail;
 
 class PostController extends Controller
 {
@@ -49,6 +51,10 @@ class PostController extends Controller
         // $validatedData['user_id']= auth()->id();  
         // Post::create($validatedData);
         auth()->user()->posts()->create($validatedData);
+
+        
+         Mail::to(auth()->user()->email)->send(new PostMail(['name'=>'Tony','title'=>$validatedData['title']]));
+
         
         return to_route("posts.index");
     }
